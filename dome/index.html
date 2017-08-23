@@ -1,0 +1,52 @@
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>fff</title>
+	<meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+	<style type="text/css">
+		#MCalendar-mask{
+			position: absolute;
+			left: 0;
+			top: 0;
+			width: 100%;
+			height: 100%;
+			background-color: rgba(0,0,0,.6);
+			z-index:0;
+		}
+		.MCalendar-content{
+			width: 100%;
+			background-color: #fff;
+			position: absolute;
+			bottom: 0;
+			left: 0;
+			z-index: 2;
+		}
+		.MCalendar-bd{
+			width: 100%;
+			text-align: center;
+		}
+		.MCalendar-hd{
+			line-height: 48px;
+			display: flex;
+		}
+		.MCalendar-hd__tools{
+			flex:1;
+			text-align: center
+		}
+		.MCalendar-active{
+			background-color: blue;
+			border-radius: 10px;
+		}
+	</style>
+</head>
+<body>
+	<input id="dome-input" type="text">
+	<input id="dome-input2" type="text">
+	
+	<script type="text/javascript" src="../dist/js/MCalendar.min.js"></script>
+	<script type="text/javascript">
+		MCalendar('#dome-input');
+		MCalendar('#dome-input2');
+	</script>
+</body>
+</html>
