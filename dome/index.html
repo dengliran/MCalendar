@@ -42,11 +42,19 @@
 <body>
 	<input id="dome-input" type="text">
 	<input id="dome-input2" type="text">
+	<input class="dome-inputCls" type="text">
+	<input class="dome-inputCls" type="text">
+	<input class="dome-inputCls" type="text">
 	
 	<script type="text/javascript" src="../dist/js/MCalendar.min.js"></script>
 	<script type="text/javascript">
 		MCalendar('#dome-input');
 		MCalendar('#dome-input2');
+		MCalendar('.dome-inputCls',{
+			callback: function(val){
+				console.log(val)
+			}
+		});
 	</script>
 </body>
 </html>
