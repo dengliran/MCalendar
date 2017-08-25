@@ -23,16 +23,16 @@ var banner = ['/*!*',
 
 gulp.task('style',function (){
 	setTimeout(function(){
-		gulp.src(['./node_modules/bootstrap/dist/css/bootstrap.min.css'])
-			/*.pipe(sourcemaps.init())
+		gulp.src(['./src/sass/*.scss'])
+			.pipe(sourcemaps.init())
 			.pipe(sass({outputStyle: 'compressed'}).on('error', sass.logError))
-			.pipe(autoprefixer(['iOS >= 7', 'Android >= 4.1']))*/
+			.pipe(autoprefixer(['iOS >= 7', 'Android >= 4.1']))
 			.pipe(rename(function (file){
 				file.basename = 'style.min';
 			}))
-			// .pipe(sourcemaps.write('./'))
-			.pipe(gulp.dest('./dist/assets/style/'))
-			// .pipe(browserSync.reload({stream:true}))
+			.pipe(sourcemaps.write('./'))
+			.pipe(gulp.dest('./dist/style/'))
+			.pipe(browserSync.reload({stream:true}))
 	},500);
 })
 
@@ -72,14 +72,14 @@ gulp.task('reset',function (){
 		.pipe(clean());
 })
 
-gulp.task('release',['script']);
+gulp.task('release',['script','style']);
 
 gulp.task('default',function(){
 	gulp.start('dev');
 })
 
 gulp.task('dev',['release','serve'],function(){
-	// gulp.watch('src/sass/**/*',['style']);
+	gulp.watch('src/sass/**/*',['style']);
 	gulp.watch('src/js/*',['script']);
 })
 

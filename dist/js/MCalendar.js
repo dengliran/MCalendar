@@ -1,5 +1,5 @@
 /*!*
- * MCalendar v0.6.2 (https://github.com/dengliran/MCalendar.git)
+ * MCalendar v1.0.0 (https://github.com/dengliran/MCalendar.git)
  * Created by Deng Liran on 2017/7
  * Licensed under the MIT license
  */
@@ -107,14 +107,14 @@ MCalendar.prototype._dateModel = function(year, month) {
 MCalendar.prototype.viewManage = function(timeData) {
 	var $shell = document.createElement('div')
 	$shell.className = 'MCalendar-container';
-	var tpl = '<div id="MCalendar-mask"></div>\
-				<div class="MCalendar-content">\
+	var tpl = '<div id="MCalendar-mask" class="fadeIn"></div>\
+				<div id="MCalendar-content" class="sideInBottom">\
 				<div class="MCalendar-hd">\
 					<a href="javascript:;" id="MCalendar__cancel">取消</a>\
 						<div class="MCalendar-hd__tools">\
-							<a href="javascript:;" id="MCalendar-hd__prev">prev</a>\
-								<span id="MCalendar-hd__ym"></span>\
-							<a href="javascript:;" id="MCalendar-hd__next">next</a>\
+							<a href="javascript:;" id="MCalendar-hd__prev"></a>\
+							<span id="MCalendar-hd__ym"></span>\
+							<a href="javascript:;" id="MCalendar-hd__next"></a>\
 						</div>\
 					<a href="javascript:;" id="MCalendar__enter">确认</a>\
 				</div>\
@@ -146,12 +146,17 @@ MCalendar.prototype.viewBind = function(timeData) {
 		if(i%7 === 0){
 			tplDay += '<tr>'
 		}
-		tplDay += '<td data-current="'+ current +'" class="'+ (this._checkInSelectedDate(current)?'MCalendar-active':'') +'">' + timeData.days[i].showDate + '</td>';
+		tplDay += '<td data-current="'+ current +'" class="'
+			+ (timeData.month == timeData.days[i].month ? '' : 'MCalendar-across')
+			+ (this._checkInSelectedDate(current) ? ' MCalendar-active' : '')
+			+ '"><span>'
+			+ timeData.days[i].showDate
+			+ '</span></td>';
 		if(i%7 === 6){
 			tplDay += '</tr>'
 		}
 	};
-	document.getElementById('MCalendar-hd__ym').innerHTML = timeData.year + '/' + timeData.month
+	document.getElementById('MCalendar-hd__ym').innerHTML = timeData.year + '年' + timeData.month + '月'
 	document.getElementById('MCalendar-bd__tbody').innerHTML = tplDay
 }
 
@@ -168,6 +173,19 @@ MCalendar.prototype._clearAllSelectedDate = function(){
 	selectedDate = [];
 	return this;
 }
+
+MCalendar.prototype.viewClose = function(){
+	document.getElementById('MCalendar-content').className += 'sideOutBottom'
+	document.getElementById('MCalendar-mask').className += 'fadeOut'
+
+	document.getElementById('MCalendar-content').addEventListener('animationend',function(){
+		document.body.removeChild(document.querySelector('.MCalendar-container'))
+	})
+
+	isOpen = false;
+	this._clearAllSelectedDate()
+}
+
 MCalendar.prototype._eventBind = function(element) {
 	var _self = this,
 		_element = document.querySelectorAll(element)
@@ -177,9 +195,7 @@ MCalendar.prototype._eventBind = function(element) {
 
 	function _elementBindFoo(e){
 		if(!isOpen){
-			selectedDate = this.getAttribute('data-selectedDate')
-				? this.getAttribute('data-selectedDate').split(',')
-				: [];
+			selectedDate = this.getAttribute('data-selectedDate') ? this.getAttribute('data-selectedDate').split(',') : [];
 
 			var _currentMonth = _self.render(),
 				EventTarget = e.target;
@@ -187,16 +203,12 @@ MCalendar.prototype._eventBind = function(element) {
 			_self.viewManage(_currentMonth)
 			isOpen = true;
 
-			document.getElementById('MCalendar-mask').addEventListener('click',function(){
-				document.body.removeChild(document.querySelector('.MCalendar-container'))
-				isOpen = false;
-				_self._clearAllSelectedDate()
+			document.getElementById('MCalendar-mask').addEventListener('click',function(){	
+				_self.viewClose()
 			})
 
 			document.getElementById('MCalendar__cancel').addEventListener('click',function(){
-				document.body.removeChild(document.querySelector('.MCalendar-container'))
-				isOpen = false;
-				_self._clearAllSelectedDate()
+				_self.viewClose()
 			})
 			document.getElementById('MCalendar-hd__prev').addEventListener('click',function(){
 				var _lastMonth = _self.render(0)
@@ -208,15 +220,19 @@ MCalendar.prototype._eventBind = function(element) {
 			})
 				
 			document.getElementById('MCalendar-bd__tbody').addEventListener('click',function(e){
-				if(e.target.tagName !== 'TD') {return false;}
+				var _target = e.target.tagName == 'SPAN'
+					? e.target.parentNode
+					: e.target
 
-				if(!/MCalendar-active/g.test(e.target.className)){
-					e.target.className += ' MCalendar-active'
-					selectedDate.push(e.target.dataset.current)
+				if(_target.tagName !== 'TD') {return false;}
+
+				if(!/MCalendar-active/g.test(_target.className)){
+					_target.className += ' MCalendar-active'
+					selectedDate.push(_target.dataset.current)
 				}else{
-					e.target.className = e.target.className.replace('MCalendar-active','')
+					_target.className = _target.className.replace('MCalendar-active','')
 					for(var i=0;i<selectedDate.length;i++){
-						if(selectedDate[i] === e.target.dataset.current){
+						if(selectedDate[i] === _target.dataset.current){
 							selectedDate.splice(i,1)
 						}
 					}
@@ -226,11 +242,16 @@ MCalendar.prototype._eventBind = function(element) {
 			document.getElementById('MCalendar__enter').addEventListener('click',function(){
 				EventTarget.value = selectedDate.join(',')
 				EventTarget.setAttribute('data-selecteddate',selectedDate)
-				document.body.removeChild(document.querySelector('.MCalendar-container'))
-
+				
 				Settings.callback(selectedDate)
 
-				isOpen = false;
+				_self.viewClose()
+			})
+
+			document.getElementById('MCalendar-content').addEventListener('animationend',function(){
+				this.className = this.className.replace('sideInBottom','')
+				var _MCalendarMask = document.getElementById('MCalendar-mask')
+				_MCalendarMask.className = _MCalendarMask.className.replace('fadeIn','')
 			})
 		}
 	}
