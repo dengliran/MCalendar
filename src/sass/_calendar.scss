@@ -1,4 +1,4 @@
-.MCalendar-mask{
+#MCalendar-mask{
 	display: block;
     position: fixed;
     top: 0;
@@ -6,7 +6,7 @@
     width: 100%;
     height: 100%;
     background: rgba(0, 0, 0, 0.5);
-    z-index: -1;
+    z-index: 500;
     transition: opacity 400ms;
 }
 
@@ -38,18 +38,11 @@
 	text-align: center;
 }
 
-%MCalendar__hd__EXTEND{
-    // height: 24px;
-}
-
-
 #MCalendar__cancel{
-    // @extend %MCalendar__hd__EXTEND;
     color: $colorGray;
 }
 #MCalendar__enter{
     color: $colorPrimary;
-	// @extend %MCalendar__hd__EXTEND;
 }
 
 %MCalendar__tool__EXTEND{
@@ -58,6 +51,7 @@
 	height: 24px;
 	padding: 0 8px;
 	vertical-align: middle;
+	position: relative;
 }
 
 #MCalendar-hd__prev{
@@ -65,7 +59,9 @@
 	&:before{
 		content: '';
 		@include setArrow(left, 10px, #bbb, 1px)
-		top: 4px;
+		position: absolute;
+		top: 6px;
+		left: 50%;
 	}
 }
 
@@ -74,7 +70,9 @@
 	&:before{
 		content: '';
 		@include setArrow(right, 10px, #bbb, 1px)
-		top: 4px;
+		position: absolute;
+		top: 6px;
+		right: 50%;
 	}
 }
 
@@ -88,6 +86,7 @@
 	table-layout:fixed;
     color: $textColorDefault;
     line-height: 1.8;
+    font-size: 16px;
     th{
 		padding: 5px 0;
     }
