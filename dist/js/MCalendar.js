@@ -18,6 +18,7 @@ var Settings = {
 		callback: function(){}
 	},
 	isOpen = false,
+	animated = false,
 	selectedDate = undefined,
 	ctrlYear = undefined,
 	ctrlMonth = undefined;
@@ -175,14 +176,19 @@ MCalendar.prototype._clearAllSelectedDate = function(){
 }
 
 MCalendar.prototype.viewClose = function(){
+	if(!isOpen || animated){return}
+
 	document.getElementById('MCalendar-content').className += 'sideOutBottom'
 	document.getElementById('MCalendar-mask').className += 'fadeOut'
 
+	animated = true
+
 	document.getElementById('MCalendar-content').addEventListener('animationend',function(){
 		document.body.removeChild(document.querySelector('.MCalendar-container'))
+		isOpen = false;
+		animated = false;
 	})
 
-	isOpen = false;
 	this._clearAllSelectedDate()
 }
 
@@ -201,7 +207,6 @@ MCalendar.prototype._eventBind = function(element) {
 				EventTarget = e.target;
 
 			_self.viewManage(_currentMonth)
-			isOpen = true;
 
 			document.getElementById('MCalendar-mask').addEventListener('click',function(){	
 				_self.viewClose()
@@ -252,6 +257,8 @@ MCalendar.prototype._eventBind = function(element) {
 				this.className = this.className.replace('sideInBottom','')
 				var _MCalendarMask = document.getElementById('MCalendar-mask')
 				_MCalendarMask.className = _MCalendarMask.className.replace('fadeIn','')
+
+				isOpen = true;
 			})
 		}
 	}
