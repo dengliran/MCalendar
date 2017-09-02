@@ -1,6 +1,6 @@
 /*!*
- * MCalendar v1.0.0 (https://github.com/dengliran/MCalendar.git)
- * Created by Deng Liran on 2017/7
+ * MCalendar v1.1.0 (https://github.com/dengliran/MCalendar.git)
+ * Created by Deng Liran on 2017/8
  * Licensed under the MIT license
  */
 
@@ -196,7 +196,7 @@ MCalendar.prototype._eventBind = function(element) {
 	var _self = this,
 		_element = document.querySelectorAll(element)
 	for (var i = 0; i < _element.length; i++) {
-		_element[i].addEventListener('focus',_elementBindFoo)
+		_element[i].addEventListener('click',_elementBindFoo)
 	}
 
 	function _elementBindFoo(e){
@@ -245,7 +245,12 @@ MCalendar.prototype._eventBind = function(element) {
 			})
 
 			document.getElementById('MCalendar__enter').addEventListener('click',function(){
-				EventTarget.value = selectedDate.join(',')
+				if(EventTarget.tagName === 'INPUT') {
+					EventTarget.value = selectedDate.join(',')
+				}else {
+					EventTarget.innerHTML = selectedDate.join(',')
+				}
+
 				EventTarget.setAttribute('data-selecteddate',selectedDate)
 				
 				Settings.callback(selectedDate)

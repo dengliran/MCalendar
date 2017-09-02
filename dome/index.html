@@ -11,12 +11,18 @@
 	<input class="dome-inputCls" type="text">
 	<input class="dome-inputCls" type="text">
 	<input class="dome-inputCls" type="text">
+	<div class="dome-inputDIV" style="width: 160px;height: 24px;border: 1px solid #ccc;"></div>
 	
 	<script type="text/javascript" src="../dist/js/MCalendar.min.js"></script>
 	<script type="text/javascript">
 		MCalendar('#dome-input');
 		MCalendar('#dome-input2');
 		MCalendar('.dome-inputCls',{
+			callback: function(val){
+				// console.log(val)
+			}
+		});
+		MCalendar('.dome-inputDIV',{
 			callback: function(val){
 				console.log(val)
 			}
