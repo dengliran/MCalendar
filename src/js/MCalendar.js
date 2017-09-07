@@ -10,7 +10,8 @@
 	}
 })(this, function() {
 var Settings = {
-		callback: function(){}
+		callback: function(){},
+		clearBtn: false
 	},
 	isOpen = false,
 	animated = false,
@@ -106,7 +107,9 @@ MCalendar.prototype.viewManage = function(timeData) {
 	var tpl = '<div id="MCalendar-mask" class="fadeIn"></div>\
 				<div id="MCalendar-content" class="sideInBottom">\
 				<div class="MCalendar-hd">\
-					<a href="javascript:;" id="MCalendar__cancel">取消</a>\
+					'+ (Settings.clearBtn 
+						? '<a href="javascript:;" id="MCalendar__clear">清除</a>' 
+						: '<a href="javascript:;" id="MCalendar__cancel">取消</a>') + '\
 						<div class="MCalendar-hd__tools">\
 							<a href="javascript:;" id="MCalendar-hd__prev"></a>\
 							<span id="MCalendar-hd__ym"></span>\
@@ -170,6 +173,16 @@ MCalendar.prototype._clearAllSelectedDate = function(){
 	return this;
 }
 
+MCalendar.prototype._clearAllSelectedView = function(){
+	var _active = document.getElementById('MCalendar-bd__tbody')
+							.querySelectorAll('.MCalendar-active')
+	for(var i = 0; i<_active.length; i++){
+		_active[i].className = _active[i].className.replace('MCalendar-active','')
+	}
+	
+	return this;
+}
+
 MCalendar.prototype.viewClose = function(){
 	if(!isOpen || animated){return}
 
@@ -207,9 +220,18 @@ MCalendar.prototype._eventBind = function(element) {
 				_self.viewClose()
 			})
 
-			document.getElementById('MCalendar__cancel').addEventListener('click',function(){
-				_self.viewClose()
-			})
+			if(Settings.clearBtn){
+				document.getElementById('MCalendar__clear').addEventListener('click',function(){
+					EventTarget.innerHTML = ''
+					EventTarget.setAttribute('data-selecteddate','')
+					_self._clearAllSelectedDate()
+						._clearAllSelectedView()
+				})
+			}else{
+				document.getElementById('MCalendar__cancel').addEventListener('click',function(){
+					_self.viewClose()
+				})
+			}
 			document.getElementById('MCalendar-hd__prev').addEventListener('click',function(){
 				var _lastMonth = _self.render(0)
 				_self.viewBind(_lastMonth)
